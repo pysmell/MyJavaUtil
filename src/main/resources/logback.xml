@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <!--定义日志文件的存储地址 勿在LogBack的配置中使用相对路径-->
+    <property name="LOG_HOME" value="D:\\log" />
+    <!--控制台输出-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender" >
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder" >
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日记消息
+            %n是换行符
+            -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} -%msg%n</pattern>
+        </encoder>
+        <!--按照每天生成日志文件-->
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--<file>${LOG_HOME}/log_error.log</file>-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出文件名-->
+            <FileNamePattern>${LOG_HOME}/TestWeb.log.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--日志文件的保留天数-->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <!-- 追加方式记录日志 -->
+        <append>true</append>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder" >
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日记消息
+            %n是换行符
+            -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} -%msg%n</pattern>
+        </encoder>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!--日志异步到数据库-->
+  <!--  <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+        &lt;!&ndash;日志异步到数据库&ndash;&gt;
+    &lt;!&ndash;    <Encoding>UTF-8</Encoding>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} -%msg%n</pattern>&ndash;&gt;
+        <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+            <dataSource class="com.mchange.v2.c3p0.ComboPooledDataSource">
+                <driverClass>com.mysql.jdbc.Driver</driverClass>
+                <url>jdbc:mysql://127.0.0.1:3306/log</url>
+                <user>root</user>
+                <password>382394323</password>
+
+            </dataSource>
+        </connectionSource>
+        <sqlDialect class="ch.qos.logback.core.db.dialect.MySQLDialect" />
+    </appender>-->
+
+    <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+       <!-- <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} -%msg%n</pattern>-->
+        <connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">
+            <dataSource class="org.apache.commons.dbcp.BasicDataSource">
+                <driverClassName>com.mysql.jdbc.Driver</driverClassName>
+                <url>jdbc:mysql://127.0.0.1:3306/log?characterEncoding=UTF-8</url>
+                <username>root</username>
+                <password>382394323</password>
+            </dataSource>
+        </connectionSource>
+    </appender>
+    <!-- show parameters for hibernate sql 专为 Hibernate 定制 -->
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder"  level="TRACE" />
+    <logger name="org.hibernate.type.descriptor.sql.BasicExtractor"  level="DEBUG" />
+    <logger name="org.hibernate.SQL" level="DEBUG" />
+    <logger name="org.hibernate.engine.QueryParameters" level="DEBUG" />
+    <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG" />
+
+    <!--myibatis log configure-->
+    <logger name="com.apache.ibatis" level="TRACE"/>
+    <logger name="java.sql.Connection" level="DEBUG"/>
+    <logger name="java.sql.Statement" level="DEBUG"/>
+    <logger name="java.sql.PreparedStatement" level="DEBUG"/>
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="DB" />
+    </root>
+</configuration>
